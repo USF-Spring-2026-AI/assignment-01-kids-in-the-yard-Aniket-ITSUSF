@@ -7,15 +7,25 @@ def main() -> None:
     # get the directory where the data csv files are
     data_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(f"Data directory: {data_dir}")
-    
-    print("Loading CSV data ...")
-    factory = PersonFactory(data_dir)
-    
 
-    print("Generating family tree (starting from 1950) ...")
-    tree = FamilyTree(factory)
-    tree.generate()
-    print(f"Done!  {tree.total_people()} people generated.\n")
+    try:
+        print("Loading CSV data ...")
+        factory = PersonFactory(data_dir)
+    except FileNotFoundError as e:
+        print(f"Startup failed — a required data file is missing: {e}")
+        return
+    except Exception as e:
+        print(f"Startup failed while loading data: {e}")
+        return
+
+    try:
+        print("Generating family tree (starting from 1950) ...")
+        tree = FamilyTree(factory)
+        tree.generate()
+        print(f"Done!  {tree.total_people()} people generated.\n")
+    except Exception as e:
+        print(f"Failed to generate family tree: {e}")
+        return
 
     menu = (
         "========================================\n"
@@ -30,8 +40,12 @@ def main() -> None:
 
     # loop to keep asking for choice until exit
     while True:
-        print(menu)
-        choice = input("Enter your choice (1-4): ").strip()
+        try:
+            print(menu)
+            choice = input("Enter your choice (1-4): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nGoodbye!")
+            break
 
         if choice == "1":
             print(f"\nTotal people in the tree: {tree.total_people()}\n")

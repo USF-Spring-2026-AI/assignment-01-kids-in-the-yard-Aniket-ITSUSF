@@ -1,5 +1,4 @@
 import csv
-import math
 import os
 import random
 from person import Person
@@ -22,12 +21,19 @@ class PersonFactory:
     # get life expectancy by year
     def _load_life_expectancy(self) -> dict[int, float]:
         table: dict[int, float] = {}
-        with open(self._csv_path("life_expectancy.csv"), newline="") as fh:
-            reader = csv.DictReader(fh)
-            for row in reader:
-                year = int(row["Year"])
-                expectancy = float(row["Period life expectancy at birth"])
-                table[year] = expectancy
+        try:
+            with open(self._csv_path("life_expectancy.csv"), newline="") as fh:
+                reader = csv.DictReader(fh)
+                for row in reader:
+                    year = int(row["Year"])
+                    expectancy = float(row["Period life expectancy at birth"])
+                    table[year] = expectancy
+        except FileNotFoundError:
+            print("Error: life_expectancy.csv not found. Check your data directory.")
+            raise
+        except Exception as e:
+            print(f"Error loading life_expectancy.csv: {e}")
+            raise
         return table
 
     # get first names
@@ -35,30 +41,44 @@ class PersonFactory:
         self,
     ) -> dict[str, dict[str, list[tuple[str, float]]]]:
         table: dict[str, dict[str, list[tuple[str, float]]]] = {}
-        with open(self._csv_path("first_names.csv"), newline="") as fh:
-            reader = csv.DictReader(fh)
-            for row in reader:
-                decade = row["decade"]
-                gender = row["gender"]
-                name = row["name"]
-                freq = float(row["frequency"])
-                table.setdefault(decade, {}).setdefault(gender, []).append(
-                    (name, freq)
-                )
+        try:
+            with open(self._csv_path("first_names.csv"), newline="") as fh:
+                reader = csv.DictReader(fh)
+                for row in reader:
+                    decade = row["decade"]
+                    gender = row["gender"]
+                    name = row["name"]
+                    freq = float(row["frequency"])
+                    table.setdefault(decade, {}).setdefault(gender, []).append(
+                        (name, freq)
+                    )
+        except FileNotFoundError:
+            print("Error: first_names.csv not found. Check your data directory.")
+            raise
+        except Exception as e:
+            print(f"Error loading first_names.csv: {e}")
+            raise
         return table
 
     # get gender probabilities
     def _load_gender_probability(self) -> dict[str, dict[str, float]]:
         table: dict[str, dict[str, float]] = {}
-        with open(
-            self._csv_path("gender_name_probability.csv"), newline=""
-        ) as fh:
-            reader = csv.DictReader(fh)
-            for row in reader:
-                decade = row["decade"]
-                gender = row["gender"]
-                prob = float(row["probability"])
-                table.setdefault(decade, {})[gender] = prob
+        try:
+            with open(
+                self._csv_path("gender_name_probability.csv"), newline=""
+            ) as fh:
+                reader = csv.DictReader(fh)
+                for row in reader:
+                    decade = row["decade"]
+                    gender = row["gender"]
+                    prob = float(row["probability"])
+                    table.setdefault(decade, {})[gender] = prob
+        except FileNotFoundError:
+            print("Error: gender_name_probability.csv not found. Check your data directory.")
+            raise
+        except Exception as e:
+            print(f"Error loading gender_name_probability.csv: {e}")
+            raise
         return table
 
     # get birth and marriage rates
@@ -66,16 +86,23 @@ class PersonFactory:
         self,
     ) -> dict[str, dict[str, float]]:
         table: dict[str, dict[str, float]] = {}
-        with open(
-            self._csv_path("birth_and_marriage_rates.csv"), newline=""
-        ) as fh:
-            reader = csv.DictReader(fh)
-            for row in reader:
-                decade = row["decade"]
-                table[decade] = {
-                    "birth_rate": float(row["birth_rate"]),
-                    "marriage_rate": float(row["marriage_rate"]),
-                }
+        try:
+            with open(
+                self._csv_path("birth_and_marriage_rates.csv"), newline=""
+            ) as fh:
+                reader = csv.DictReader(fh)
+                for row in reader:
+                    decade = row["decade"]
+                    table[decade] = {
+                        "birth_rate": float(row["birth_rate"]),
+                        "marriage_rate": float(row["marriage_rate"]),
+                    }
+        except FileNotFoundError:
+            print("Error: birth_and_marriage_rates.csv not found. Check your data directory.")
+            raise
+        except Exception as e:
+            print(f"Error loading birth_and_marriage_rates.csv: {e}")
+            raise
         return table
 
     # get last names and probabilities for ranks
@@ -83,19 +110,33 @@ class PersonFactory:
         self,
     ) -> tuple[dict[str, list[str]], list[float]]:
         names_by_decade: dict[str, list[str]] = {}
-        with open(self._csv_path("last_names.csv"), newline="") as fh:
-            reader = csv.DictReader(fh)
-            for row in reader:
-                decade = row["Decade"]
-                names_by_decade.setdefault(decade, []).append(
-                    row["LastName"]
-                )
+        try:
+            with open(self._csv_path("last_names.csv"), newline="") as fh:
+                reader = csv.DictReader(fh)
+                for row in reader:
+                    decade = row["Decade"]
+                    names_by_decade.setdefault(decade, []).append(
+                        row["LastName"]
+                    )
+        except FileNotFoundError:
+            print("Error: last_names.csv not found. Check your data directory.")
+            raise
+        except Exception as e:
+            print(f"Error loading last_names.csv: {e}")
+            raise
 
-        with open(
-            self._csv_path("rank_to_probability.csv"), newline=""
-        ) as fh:
-            line = fh.readline().strip()
-            rank_probs = [float(p) for p in line.split(",")]
+        try:
+            with open(
+                self._csv_path("rank_to_probability.csv"), newline=""
+            ) as fh:
+                line = fh.readline().strip()
+                rank_probs = [float(p) for p in line.split(",")]
+        except FileNotFoundError:
+            print("Error: rank_to_probability.csv not found. Check your data directory.")
+            raise
+        except Exception as e:
+            print(f"Error loading rank_to_probability.csv: {e}")
+            raise
 
         return names_by_decade, rank_probs
 
