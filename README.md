@@ -1,7 +1,3 @@
-# AI Assignment 01 - Kids in the Yard
-
-See assignment details on Canvas.
-
 # Reflection
 - https://docs.google.com/document/d/1nQawoWFE_zC6zVyzUv5un38ACAuIWteXGl22qZ_F2ps/edit?usp=sharing
 
