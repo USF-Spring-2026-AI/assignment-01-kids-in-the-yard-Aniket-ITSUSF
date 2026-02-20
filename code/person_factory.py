@@ -176,6 +176,10 @@ class PersonFactory:
         partner.partner = person
         return partner
 
+    def pick_last_name(self, decade_str: str) -> str:
+        # public wrapper so callers don't touch the private method
+        return self._pick_last_name(decade_str)
+
     def get_marriage_rate(self, decade_str: str) -> float:
         # gets the marriage chance
         rates = self._birth_marriage.get(decade_str)

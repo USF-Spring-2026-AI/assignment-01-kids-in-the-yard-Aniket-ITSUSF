@@ -15,7 +15,7 @@ class FamilyTree:
 
     def generate(self) -> None:
         # start with 2 founders in 1950 and keep making kids
-        founder_last_name = self._factory._pick_last_name(
+        founder_last_name = self._factory.pick_last_name(
             PersonFactory.get_decade_str(1950)
         )
 
